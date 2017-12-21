@@ -1,85 +1,53 @@
 <!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
-<web-app>
-    <!-- Load Spring context file-->
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+	      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    <context-param>
+        <param-name>log4jConfiguration</param-name>
+        <param-value>classpath:config/log4j2/log4j2.xml</param-value>
+    </context-param>
+
+    <!--设置spring 配置文件的位置-->
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:config/web-application-config.xml</param-value>
-        <description>
-            The 'contextConfigLocation' param specifies where your configuration files are located.
-        </description>
+        <param-value>classpath*:config/spring/applicationContext-*.xml</param-value>
     </context-param>
-    <!-- Load log4j.xml file -->
-    <context-param>
-        <param-name>log4jConfigLocation</param-name>
-        <param-value>classpath:config/log4j.xml</param-value>
-    </context-param>
-    <!-- Read log4j.xml file with specified interval -->
-    <context-param>
-        <param-name>log4jRefreshInterval</param-name>
-        <param-value>60000</param-value>
-    </context-param>
-
-    <filter>
-        <filter-name>characterEncodingFilter</filter-name>
-        <description>
-            Filter that allows one to specify a character encoding for requests. This is useful because current browsers typically do not set a character encoding even if specified in the HTML page or form.
-            This filter can either apply its encoding if the request does not already specify an encoding, or enforce this filter's encoding in any case
-            ("forceEncoding"="true"). In the latter case, the encoding will also be applied as default response encoding
-        </description>
-        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-        <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-        <init-param>
-            <param-name>forceEncoding</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>characterEncodingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <!--ContextLoaderListener implements javax.servlet.ServletContextListener interface, load global application context -->
+    <!--配置spring listener-->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-    <!-- Listener that avoid spring out of memory-->
-    <listener>
-        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
-    </listener>
-    <!-- Listener for Log4j-->
-    <listener>
-        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-    </listener>
-
-    <servlet>
-        <servlet-name>frame</servlet-name>
-        <description>
-            DispatcherServlet,Spring MVC dispatcher servlet. This is the entry point for the Spring MVC application.
-        </description>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!--解决POST乱码问题-->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
         <init-param>
-             <param-name>contextConfigLocation</param-name>
-            <param-value></param-value>
+            <param-name>encoding</param-name>
+            <param-value>utf-8</param-value>
         </init-param>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-  
-    <servlet-mapping>
-        <servlet-name>frame</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
-
-    <!-- Configure session timeout -->
-    <session-config>
-        <session-timeout>20</session-timeout>
-    </session-config>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <!-- Struts2的核心过滤器配置 -->
+    <filter>
+        <filter-name>struts2</filter-name>
+        <filter-class>
+            org.apache.struts2.dispatcher.filter.StrutsPrepareAndExecuteFilter
+        </filter-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>config/struts2/struts-core.xml</param-value>
+        </init-param>
+    </filter>
+    <!-- Struts2过滤器拦截所有的.action请求 -->
+    <filter-mapping>
+        <filter-name>struts2</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>
-
-

@@ -1,7 +1,7 @@
-Java开发框架搭建整理：
+## ssmweb-base分支说明
 
-## SpringMVC框架
+此分支实现功能：
 
-
-## SSM框架
-
+1. 基于maven搭建的ssm框架(spring+struts+mybatis)；
+2. 日志整合为Log4j2；
+3. 测试url:localhost:8080/ssmweb/videoAlarm/selectEpcpVideoAlarms.action；
